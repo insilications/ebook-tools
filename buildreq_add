@@ -1,0 +1,16 @@
+# This file contains additional build requirements that did not get
+# picked up automatically. One name per line, no whitespace.
+libjpeg-turbo-dev
+libjpeg-turbo-staticdev
+automake-dev
+automake
+autogen
+autogen-dev
+buildreq-cmake
+tiff-dev
+tiff-staticdev
+findutils
+libxml2-dev
+libxml2-staticdev
+libzip-dev
+libzip-staticdev

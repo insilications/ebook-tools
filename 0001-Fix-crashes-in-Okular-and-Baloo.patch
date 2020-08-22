@@ -1,0 +1,42 @@
+From 52675f1397cc05b8ca196fa0547ed7a2c31892ea Mon Sep 17 00:00:00 2001
+From: insilications <boboniboni@gmail.com>
+Date: Sat, 22 Aug 2020 18:35:21 -0300
+Subject: [PATCH] Fix crashes in Okular and Baloo
+
+---
+ src/libepub/epub.c | 4 ++--
+ src/libepub/opf.c  | 3 +++
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/src/libepub/epub.c b/src/libepub/epub.c
+index d085503..a2e9808 100644
+--- a/src/libepub/epub.c
++++ b/src/libepub/epub.c
+@@ -469,8 +469,8 @@ int epub_tit_next(struct titerator *tit) {
+   case TITERATOR_NAVMAP:
+   case TITERATOR_PAGES:
+     ti = GetNodeData(curr);
+-    tit->cache.label = 
+-      (char *)_opf_label_get_by_doc_lang(tit->epub->opf, ti->label);
++    if (ti->label)
++        tit->cache.label = (char *)_opf_label_get_by_doc_lang(tit->epub->opf, ti->label);
+ 
+     if (! tit->cache.label)
+       tit->cache.label = (char *)ti->id;
+diff --git a/src/libepub/opf.c b/src/libepub/opf.c
+index 34145b9..92d4b22 100644
+--- a/src/libepub/opf.c
++++ b/src/libepub/opf.c
+@@ -394,6 +394,9 @@ void _opf_parse_navmap(struct opf *opf, xmlTextReaderPtr reader) {
+      
+       } else if (xmlTextReaderNodeType(reader) == 15) {
+         if (item) {
++            if (! item->label) {
++                _epub_print_debug(opf->epub, DEBUG_WARNING, "- missing navlabel for nav point element");
++            }
+           _epub_print_debug(opf->epub, DEBUG_INFO, 
+                             "adding nav point item->%s %s (d:%d,p:%d)", 
+                             item->id, item->src, item->depth, item->playOrder);
+-- 
+2.27.0
+
